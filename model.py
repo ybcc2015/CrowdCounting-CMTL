@@ -33,7 +33,7 @@ def CMTL(input_shape=None, num_classes=10):
     hl_prior_2 = Dense(512, activation=PReLU())(hl_prior_2)
     hl_prior_2 = Dense(256, activation=PReLU())(hl_prior_2)
     hl_prior_2 = Dense(num_classes, activation=PReLU())(hl_prior_2)
-    cls = Activation('softmax', name='class_output')(hl_prior_2)
+    cls = Activation('softmax', name='output_class')(hl_prior_2)
 
     # density estimate stage
     den_1 = Conv2D(20, (7, 7), padding='same', activation=PReLU())(shared)
@@ -47,7 +47,7 @@ def CMTL(input_shape=None, num_classes=10):
     den_2 = Conv2D(32, (3, 3), padding='same', activation=PReLU())(den_2)
     den_2 = Conv2DTranspose(16, (4, 4), strides=2, padding='same', activation=PReLU())(den_2)
     den_2 = Conv2DTranspose(8, (4, 4), strides=2, padding='same', activation=PReLU())(den_2)
-    density_map = Conv2D(1, (1, 1), padding='same', activation='relu', name='density_output')(den_2)
+    density_map = Conv2D(1, (1, 1), padding='same', activation='relu', name='output_density')(den_2)
 
     model = Model(inputs=inputs, outputs=[density_map, cls])
     return model
