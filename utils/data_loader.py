@@ -56,26 +56,26 @@ class DataLoader(object):
             blob['gt_count'] = gt_count
             blob['fname'] = fname
             self.blob_list.append(blob)
-        self.bin = (self.max_gt_count - self.min_gt_count) / self.num_classes
-        self.assign_classes()  # 设置图片类别
 
+        self.assign_classes()  # 设置图片类别
         if self.shuffle:
             np.random.shuffle(self.blob_list)
         X = np.array([blob['data'] for blob in self.blob_list])
         Y_den = np.array([blob['gt_den'] for blob in self.blob_list])
-        Y_count = np.array([blob['gt_label'] for blob in self.blob_list])
-        return X, Y_den, Y_count
+        Y_class = np.array([blob['gt_class'] for blob in self.blob_list])
+        return X, Y_den, Y_class
 
     def assign_classes(self):
         """
         设置图片gt类别
         """
+        self.bin = (self.max_gt_count - self.min_gt_count) / self.num_classes
         for blob in self.blob_list:
             gt_class = np.zeros(self.num_classes, dtype=np.int32)
             idx = np.round(blob['gt_count'] / self.bin)
             idx = int(min(idx, self.num_classes-1))
             gt_class[idx] = 1
-            blob['gt_label'] = gt_class
+            blob['gt_class'] = gt_class
             self.count_class_hist[idx] += 1
 
     def get_class_weights(self):
@@ -92,14 +92,10 @@ class DataLoader(object):
             np.random.shuffle(self.blob_list)
             for i in range(loop_count):
                 blobs = self.blob_list[i*batch_size: (i+1)*batch_size]
-                X_batch = np.array([blob['data'] for blob in blobs])
-                Y_batch = np.array([blob['gt'] for blob in blobs])
-                yield X_batch, Y_batch
-
-    def get_all(self):
-        X = np.array([blob['data'] for blob in self.blob_list])
-        Y = np.array([blob['gt'] for blob in self.blob_list])
-        return X, Y
+                X = np.array([blob['data'] for blob in blobs])
+                Y_den = np.array([blob['gt_den'] for blob in blobs])
+                Y_class = np.array([blob['gt_class'] for blob in blobs])
+                yield X, Y_den, Y_class
 
     def __iter__(self):
         for blob in self.blob_list:
