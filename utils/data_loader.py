@@ -57,7 +57,6 @@ class DataLoader(object):
             blob['fname'] = fname
             self.blob_list.append(blob)
         self.bin = (self.max_gt_count - self.min_gt_count) / self.num_classes
-
         self.assign_classes()  # 设置图片类别
 
         if self.shuffle:
@@ -78,6 +77,14 @@ class DataLoader(object):
             gt_class[idx] = 1
             blob['gt_label'] = gt_class
             self.count_class_hist[idx] += 1
+
+    def get_class_weights(self):
+        """
+        根据每类的样本数量对每一类设置权重（可在训练期间让模型更多关注样本较少的类别）
+        """
+        class_weights = 1 - self.count_class_hist / self.num_samples
+        class_weights = class_weights / self.num_samples
+        return class_weights
 
     def flow(self, batch_size=32):
         loop_count = self.num_samples // batch_size
