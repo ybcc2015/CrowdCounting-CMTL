@@ -2,10 +2,7 @@
 from keras.models import Model, Input
 from keras.layers import Conv2D, Dense, Activation, Concatenate, MaxPooling2D, Conv2DTranspose, Flatten
 from keras.layers.advanced_activations import PReLU
-
-
-def spp(x):
-    return x
+from utils.spp import SpatialPyramidPooling
 
 
 def CMTL(input_shape=None, num_classes=10):
@@ -28,9 +25,11 @@ def CMTL(input_shape=None, num_classes=10):
     hl_prior_1 = MaxPooling2D(2)(hl_prior_1)
     hl_prior_1 = Conv2D(16, (7, 7), padding='same', activation=PReLU())(hl_prior_1)
     hl_prior_1 = Conv2D(8, (7, 7), padding='same', activation=PReLU())(hl_prior_1)
-    spp_out = spp(hl_prior_1)  # todo: spp layer
-    hl_prior_2 = Flatten()(spp_out)
-    hl_prior_2 = Dense(512, activation=PReLU())(hl_prior_2)
+
+    # fix different sizes input to the same size output,
+    # spp_out shape will be (samples, channels * sum([i * i for i in pool_list])
+    spp_out = SpatialPyramidPooling([1, 2, 4])(hl_prior_1)
+    hl_prior_2 = Dense(512, activation=PReLU())(spp_out)
     hl_prior_2 = Dense(256, activation=PReLU())(hl_prior_2)
     hl_prior_2 = Dense(num_classes, activation=PReLU())(hl_prior_2)
     cls = Activation('softmax', name='output_class')(hl_prior_2)
