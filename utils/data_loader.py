@@ -92,6 +92,7 @@ class DataLoader(object):
         return class_weights
 
     def flow(self, batch_size=32):
+        # todo: generate data in batch to save memory
         loop_count = self.num_samples // batch_size
         while True:
             np.random.shuffle(self.blob_list)
