@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from keras.models import Model, Input
-from keras.layers import Conv2D, Dense, Activation, Concatenate, MaxPooling2D, Conv2DTranspose, Flatten
+from keras.layers import Conv2D, Dense, Activation, Concatenate, MaxPooling2D, Conv2DTranspose, Dropout
 from keras.layers.advanced_activations import PReLU
 from utils.spp import SpatialPyramidPooling
 
@@ -37,8 +37,10 @@ def CMTL(input_shape=None, num_classes=10):
     spp_out = SpatialPyramidPooling([1, 2, 4])(hl_prior_1)
     hl_prior_2 = Dense(512)(spp_out)
     hl_prior_2 = PReLU(shared_axes=[1])(hl_prior_2)
+    hl_prior_2 = Dropout(0.5)(hl_prior_2)
     hl_prior_2 = Dense(256)(hl_prior_2)
     hl_prior_2 = PReLU(shared_axes=[1])(hl_prior_2)
+    hl_prior_2 = Dropout(0.5)(hl_prior_2)
     hl_prior_2 = Dense(num_classes)(hl_prior_2)
     hl_prior_2 = PReLU(shared_axes=[1])(hl_prior_2)
     cls = Activation('softmax', name='cls')(hl_prior_2)
