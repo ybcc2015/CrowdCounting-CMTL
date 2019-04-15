@@ -29,8 +29,9 @@ def main(args):
     input_shape = (None, None, 1)
     model = CMTL(input_shape)
     adam = Adam(lr=0.00001)
-    loss = {'density': 'mse', 'cls': 'categorical_crossentropy'}
+    loss = {'density': 'mse', 'cls': 'binary_crossentropy'}
     loss_weights = {'density': 1.0, 'cls': 0.0001}
+    print('[INFO] Compiling model ...'.format(dataset))
     model.compile(optimizer=adam, loss=loss, loss_weights=loss_weights,
                   metrics={'density': [MAE, MSE]})
 
@@ -41,7 +42,11 @@ def main(args):
     )
     callback_list = [checkpointer_best_train]
 
+    # 随机数据增广
+    print('[INFO] Random data augment ...'.format(dataset))
+    train_X, train_Y_den = train_data_loader.random_augment(train_X, train_Y_den)
     # 训练
+    print('[INFO] Training Part_{} ...'.format(dataset))
     model.fit(train_X,
               {"density": train_Y_den, "cls": train_Y_class},
               validation_data=(val_X, {"density": val_Y_den, "cls": val_Y_class}),
