@@ -112,8 +112,8 @@ class DataLoader(object):
         for img, gt in zip(imgs, gts):
             if np.random.uniform() > 0.5:
                 # 随机翻转图片以及density map
-                img = np.flip(img, 3).copy()
-                gt = np.flip(gt, 3).copy()
+                img = np.flip(img, 2).copy()
+                gt = np.flip(gt, 2).copy()
             if np.random.uniform() > 0.5:
                 # 加入随机噪音
                 img = img + np.random.uniform(-10, 10, size=img.shape)
