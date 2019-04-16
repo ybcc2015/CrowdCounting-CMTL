@@ -29,7 +29,7 @@ def main(args):
     input_shape = (None, None, 1)
     model = CMTL(input_shape)
     adam = Adam(lr=0.00001)
-    loss = {'density': 'mse', 'cls': 'binary_crossentropy'}
+    loss = {'density': 'mse', 'cls': 'categorical_crossentropy'}
     loss_weights = {'density': 1.0, 'cls': 0.0001}
     print('[INFO] Compiling model ...'.format(dataset))
     model.compile(optimizer=adam, loss=loss, loss_weights=loss_weights,
