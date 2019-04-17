@@ -50,7 +50,7 @@ def main(args):
     model.fit(train_X,
               {"density": train_Y_den, "cls": train_Y_class},
               validation_data=(val_X, {"density": val_Y_den, "cls": val_Y_class}),
-              batch_size=1, epochs=cfg.EPOCHS, callbacks=callback_list,
+              batch_size=cfg.TRAIN_BATCH_SIZE, epochs=cfg.EPOCHS, callbacks=callback_list,
               class_weight={"cls": class_weights})
 
 
