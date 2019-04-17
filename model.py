@@ -34,7 +34,7 @@ def CMTL(input_shape=None, num_classes=10):
 
     # fix different sizes input to the same size output,
     # spp_out shape will be (samples, channels * sum([i * i for i in pool_list])
-    spp_out = SpatialPyramidPooling([1, 2, 4])(hl_prior_1)
+    spp_out = SpatialPyramidPooling([1, 16, 32])(hl_prior_1)
     hl_prior_2 = Dense(512)(spp_out)
     hl_prior_2 = PReLU(shared_axes=[1])(hl_prior_2)
     hl_prior_2 = Dropout(0.5)(hl_prior_2)
