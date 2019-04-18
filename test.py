@@ -7,6 +7,7 @@ import numpy as np
 import config as cfg
 import argparse
 import os
+import tensorflow as tf
 
 
 def main(args):
@@ -31,7 +32,7 @@ def main(args):
     _ = data_loader.load_all()
     # load model
     print('[INFO] Load model ...')
-    model = load_model(model_path, custom_objects={'SpatialPyramidPooling': SpatialPyramidPooling})
+    model = load_model(model_path, custom_objects={'tf': tf})
 
     # test
     print('[INFO] Testing Part_{} ...'.format(dataset))
@@ -54,7 +55,7 @@ def main(args):
         # save_heatmap(pred, blob, test_path, heatmaps_dir)
         # save results
         with open(results_txt, 'a') as f:
-            line = '<{}> {:.2f} -- {:.2f}\t{} -- {}\n'.format(blob['fname'].split('.')[0], gt_count, pred_count,
+            line = '<{}> {:.2f}--{:.2f}\t{}--{}\n'.format(blob['fname'].split('.')[0], gt_count, pred_count,
                                                               gt_cls, np.argmax(pred_cls[0]))
             f.write(line)
 
