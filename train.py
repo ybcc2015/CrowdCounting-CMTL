@@ -2,7 +2,7 @@
 from keras.optimizers import Adam
 from keras.callbacks import ModelCheckpoint
 from model import CMTL
-from utils.metrics import MAE, MSE
+from utils.metrics import mae, mse
 from utils.data_loader import DataLoader
 import config as cfg
 import os
@@ -33,7 +33,7 @@ def main(args):
     loss_weights = {'density': 1.0, 'cls': 0.0001}
     print('[INFO] Compiling model ...'.format(dataset))
     model.compile(optimizer=adam, loss=loss, loss_weights=loss_weights,
-                  metrics={'density': [MAE, MSE]})
+                  metrics={'density': [mae, mse], 'cls': 'accuracy'})
 
     # 定义callback
     checkpointer_best_train = ModelCheckpoint(
@@ -42,9 +42,9 @@ def main(args):
     )
     callback_list = [checkpointer_best_train]
 
-    # 随机数据增广
-    print('[INFO] Random data augment ...'.format(dataset))
-    train_X, train_Y_den = train_data_loader.random_augment(train_X, train_Y_den)
+    # # 随机数据增广
+    # print('[INFO] Random data augment ...'.format(dataset))
+    # train_X, train_Y_den = train_data_loader.random_augment(train_X, train_Y_den)
     # 训练
     print('[INFO] Training Part_{} ...'.format(dataset))
     model.fit(train_X,
